@@ -1,0 +1,131 @@
+.movie-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.movie-modal {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  max-width: 800px;
+  width: 90%;
+  position: relative;
+  animation: modalFadeIn 0.3s ease;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.modal-content {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+
+.modal-image {
+  flex: 0 0 300px;
+}
+
+.modal-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.modal-info {
+  flex: 1;
+}
+
+.modal-info h2 {
+  margin: 0 0 10px;
+  font-size: 24px;
+}
+
+.rating {
+  color: #ffd700;
+  margin-bottom: 15px;
+}
+
+.description {
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.movie-details {
+  margin-bottom: 20px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.watch-btn,
+.playlist-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.watch-btn {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.playlist-btn {
+  background-color: transparent;
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
+}
+
+.watch-btn:hover,
+.playlist-btn:hover {
+  transform: translateY(-2px);
+}
+
+.watch-btn:disabled,
+.playlist-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    flex-direction: column;
+  }
+  
+  .modal-image {
+    flex: none;
+  }
+} 

@@ -1,0 +1,27 @@
+:root {
+  --primary-color: #e50914;
+  --secondary-color: #141414;
+  --text-color: #ffffff;
+  --hover-color: #ff161d;
+  --card-bg: #1f1f1f;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  font-family: 'Arial', sans-serif;
+}
+
+.app-container {
+  min-height: 100vh;
+}
+
+.main-content {
+  padding: 6rem 2rem 2rem;
+}
