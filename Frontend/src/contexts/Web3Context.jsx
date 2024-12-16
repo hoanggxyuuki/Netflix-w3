@@ -12,6 +12,12 @@ export const Web3Provider = ({ children }) => {
 
   useEffect(() => {
     const checkConnection = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        handleDisconnect();
+        return;
+      }
+
       if (window.ethereum) {
         try {
           const accounts = await window.ethereum.request({ method: 'eth_accounts' });
@@ -19,9 +25,12 @@ export const Web3Provider = ({ children }) => {
             const provider = new ethers.providers.Web3Provider(window.ethereum);
             setProvider(provider);
             setAccount(accounts[0]);
+          } else {
+            handleDisconnect();
           }
         } catch (error) {
           console.error('Error checking connection:', error);
+          handleDisconnect();
         }
       }
     };
@@ -35,11 +44,13 @@ export const Web3Provider = ({ children }) => {
       const message = `Please sign this message to verify your identity.\nNonce: ${nonce}`;
       
       const signature = await signer.signMessage(message);
+      
       const response = await authApi.login(address, signature);
+      console.log('Auth response:', response);
       
       if (response.data.success) {
         localStorage.setItem('token', response.data.data.token);
-        console.log(response.data.data.token);
+        
         setAccount(address);
         toast.success('Wallet connected successfully!');
       }
@@ -71,7 +82,7 @@ export const Web3Provider = ({ children }) => {
     } catch (error) {
       console.error('Connection error:', error);
       toast.error('Failed to connect wallet');
-      setAccount(null);
+      handleDisconnect();
     } finally {
       setLoading(false);
     }
@@ -81,7 +92,7 @@ export const Web3Provider = ({ children }) => {
     setAccount(null);
     setProvider(null);
     localStorage.removeItem('token');
-    toast.info('Wallet disconnected');
+    
   };
 
   useEffect(() => {
@@ -93,11 +104,16 @@ export const Web3Provider = ({ children }) => {
           handleDisconnect();
         }
       });
+
+      window.ethereum.on('disconnect', () => {
+        handleDisconnect();
+      });
     }
 
     return () => {
       if (window.ethereum) {
         window.ethereum.removeListener('accountsChanged', handleDisconnect);
+        window.ethereum.removeListener('disconnect', handleDisconnect);
       }
     };
   }, []);

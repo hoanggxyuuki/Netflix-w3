@@ -3,30 +3,48 @@ const User = require('../models/User');
 const { generateToken } = require('../utils/generateToken');
 const { AppError } = require('../middlewares/errorHandler');
 const jwt = require('jsonwebtoken');
+const { JWT_SECRET } = require('../config/env');
 
 exports.login = async (req, res, next) => {
   try {
-    const { walletAddress } = req.body;
+    const { walletAddress, signature } = req.body;
     
-    // Tìm user hoặc tạo mới nếu chưa tồn tại
-    let user = await User.findOne({ walletAddress });
+    // Verify signature here if needed
     
+    // Find or create user
+    let user = await User.findOne({ walletAddress: walletAddress.toLowerCase() });
     if (!user) {
       user = await User.create({ 
-        walletAddress,
-        role: 'user' // Mặc định là user khi tạo mới
+        walletAddress: walletAddress.toLowerCase(),
+        role: 'user' // Default role
       });
     }
 
+    // Generate JWT token
+    const token = jwt.sign(
+      { 
+        id: user._id,
+        walletAddress: user.walletAddress,
+        role: user.role 
+      },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    // Return response with token
     res.json({
       success: true,
-      user: {
-        walletAddress: user.walletAddress,
-        role: user.role
+      data: {
+        token,
+        user: {
+          walletAddress: user.walletAddress,
+          role: user.role
+        }
       }
     });
 
   } catch (error) {
+    console.error('Login error:', error);
     next(error);
   }
 };
