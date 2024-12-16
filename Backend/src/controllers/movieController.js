@@ -7,8 +7,7 @@ exports.getAllMovies = async (req, res, next) => {
   try {
     const movies = await movieService.getAllMovies(req.query);
     
-    // Đảm bảo trả về mảng rỗng nếu không có dữ liệu
-    const response = {
+     const response = {
       success: true,
       data: {
         local: movies.local || [],
@@ -19,7 +18,7 @@ exports.getAllMovies = async (req, res, next) => {
 
     res.json(response);
   } catch (error) {
-    console.error('Controller error:', error); // Debug log
+    console.error('Controller error:', error);  
     next(error);
   }
 };
@@ -29,13 +28,10 @@ exports.getMovieById = async (req, res, next) => {
     const { id } = req.params;
     let movie;
 
-    // Kiểm tra xem id có phải là MongoDB ObjectId không
-    if (id.match(/^[0-9a-fA-F]{24}$/)) {
-      // Nếu là ObjectId, tìm trong database local
-      movie = await Movie.findById(id);
+     if (id.match(/^[0-9a-fA-F]{24}$/)) {
+       movie = await Movie.findById(id);
     } else {
-      // Nếu không phải ObjectId, giả định là TMDB ID
-      try {
+       try {
         const tmdbResponse = await movieService.getTMDBMovieById(id);
         if (tmdbResponse) {
           movie = {
@@ -83,16 +79,14 @@ exports.createMovie = async (req, res, next) => {
       genre: req.body.genre,
       price: req.body.price,
       nftContractAddress: req.body.nftContractAddress,
-      uploadedBy: req.user.id // Từ auth middleware
+      uploadedBy: req.user.id  
     };
 
-    // Validate input
-    if (!movieData.title || !movieData.description || !movieData.streamUrl) {
+     if (!movieData.title || !movieData.description || !movieData.streamUrl) {
       throw new AppError('Missing required fields', 400);
     }
 
-    // Create movie
-    const movie = await Movie.create(movieData);
+     const movie = await Movie.create(movieData);
 
     res.status(201).json({
       success: true,
@@ -110,11 +104,9 @@ exports.getMovieStream = async (req, res, next) => {
     let movie;
 
     if (id.match(/^[0-9a-fA-F]{24}$/)) {
-      // Local movie
-      movie = await Movie.findById(id);
+       movie = await Movie.findById(id);
     } else {
-      // TMDB movie
-      try {
+       try {
         const videoData = await movieService.getTMDBMovieVideos(id);
         const tmdbResponse = await movieService.getTMDBMovieById(id);
         
@@ -131,8 +123,7 @@ exports.getMovieStream = async (req, res, next) => {
             id: tmdbResponse.id,
             title: tmdbResponse.title,
             description: tmdbResponse.overview,
-            // Trả về embed URL thay vì watch URL
-            streamUrl: `https://www.youtube.com/embed/${video.key}`,
+             streamUrl: `https://www.youtube.com/embed/${video.key}`,
             vrStreamUrl: null,
             hasVR: false,
             duration: video.size || 120,

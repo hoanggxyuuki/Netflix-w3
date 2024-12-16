@@ -50,8 +50,7 @@ class IPFSService {
       throw new AppError('Invalid IPFS URL', 400);
     }
     const hash = ipfsUrl.replace('ipfs://', '');
-    // Sử dụng Pinata Gateway
-    return `https://gateway.pinata.cloud/ipfs/${hash}`;
+     return `https://gateway.pinata.cloud/ipfs/${hash}`;
   }
 
   async testConnection() {

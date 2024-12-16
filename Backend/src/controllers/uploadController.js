@@ -11,8 +11,7 @@ exports.uploadMovie = async (req, res, next) => {
       throw new AppError('Video and poster are required', 400);
     }
 
-    // Upload files to IPFS using Pinata
-    const [videoUrl, posterUrl] = await Promise.all([
+     const [videoUrl, posterUrl] = await Promise.all([
       ipfsService.uploadFile(video.buffer, `${title}-video`),
       ipfsService.uploadFile(poster.buffer, `${title}-poster`)
     ]);
@@ -25,8 +24,7 @@ exports.uploadMovie = async (req, res, next) => {
       );
     }
 
-    // Create movie record
-    const movie = await Movie.create({
+     const movie = await Movie.create({
       title,
       description,
       hasVR: Boolean(hasVR),
@@ -55,8 +53,7 @@ exports.updateMovieFiles = async (req, res, next) => {
       throw new AppError('Movie not found', 404);
     }
 
-    // Update video files
-    if (video) {
+     if (video) {
       const videoResult = await ipfs.add(video.buffer);
       movie.streamUrl = `ipfs://${videoResult.path}`;
     }

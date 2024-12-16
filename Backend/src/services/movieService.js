@@ -6,18 +6,15 @@ const axios = require('axios');
 class MovieService {
   async getAllMovies(query = {}) {
     try {
-      // Lấy movies từ DB local
-      const localMovies = await Movie.find(query);
+       const localMovies = await Movie.find(query);
 
-      // Lấy popular movies từ TMDB
-      let tmdbMovies = [];
+       let tmdbMovies = [];
       try {
         tmdbMovies = await tmdbService.getPopularMovies(1);
       } catch (tmdbError) {
       }
 
-      // Kết hợp và format kết quả
-      const combinedMovies = {
+       const combinedMovies = {
         local: localMovies.map(movie => ({
           id: movie._id,
           tmdbId: movie.tmdbId,

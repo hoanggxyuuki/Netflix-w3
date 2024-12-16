@@ -85,7 +85,6 @@ const MovieManagement = () => {
     <div className="movie-management">
       <h2>Movie Management</h2>
       
-      {/* Upload Form */}
       <form onSubmit={handleUpload} className="upload-form">
         <input
           type="text"
@@ -122,7 +121,6 @@ const MovieManagement = () => {
         <button type="submit">Upload Movie</button>
       </form>
 
-      {/* Movies List */}
       <div className="movies-list">
         {movies.map(movie => (
           <div key={movie._id} className="movie-item">

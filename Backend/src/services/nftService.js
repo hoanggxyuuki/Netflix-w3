@@ -62,12 +62,10 @@ class NFTService {
         throw new AppError('Not authorized to transfer this NFT', 403);
       }
 
-      // Update NFT status
-      nft.status = 'transferred';
+       nft.status = 'transferred';
       await nft.save();
 
-      // Remove NFT from user's collection
-      await User.findByIdAndUpdate(
+       await User.findByIdAndUpdate(
         fromUserId,
         { $pull: { ownedNFTs: nftId } }
       );

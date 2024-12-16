@@ -41,18 +41,15 @@ exports.importMovieFromTMDB = async (req, res, next) => {
       throw new AppError('TMDB ID is required', 400);
     }
 
-    // Get movie details from TMDB
-    const movieDetails = await tmdbService.getMovieDetails(tmdbId);
+     const movieDetails = await tmdbService.getMovieDetails(tmdbId);
 
-    // Download poster and upload to IPFS
-    const posterResponse = await axios.get(movieDetails.poster, {
+     const posterResponse = await axios.get(movieDetails.poster, {
       responseType: 'arraybuffer'
     });
     const posterBuffer = Buffer.from(posterResponse.data);
     const posterIpfsUrl = await ipfsService.uploadFile(posterBuffer);
 
-    // Create movie in our database
-    const movie = await movieService.createMovie({
+     const movie = await movieService.createMovie({
       title: movieDetails.title,
       description: movieDetails.description,
       poster: posterIpfsUrl,
@@ -60,8 +57,8 @@ exports.importMovieFromTMDB = async (req, res, next) => {
       releaseDate: movieDetails.releaseDate,
       rating: movieDetails.rating,
       genre: movieDetails.genre,
-      hasVR: false, // Default to false since TMDB movies won't have VR
-      price: 0.1, // Set default price
+      hasVR: false,  
+      price: 0.1,  
       nftContractAddress: process.env.NFT_CONTRACT_ADDRESS
     }, req.user.id);
 

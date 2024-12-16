@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const { errorHandler } = require('./src/middlewares/errorHandler');
 const { logger } = require('./src/middlewares/loggerMiddleware');
 
-// Import routes
 const movieRoutes = require('./src/routes/movieRoutes');
 const authRoutes = require('./src/routes/authRoutes');
 const nftRoutes = require('./src/routes/nftRoutes');
@@ -16,17 +15,14 @@ const { MONGODB_URI, PORT } = require('./src/config/env');
 
 const app = express();
 
-// Middlewares
 app.use(cors());
 app.use(express.json());
 app.use(logger);
 
-// Basic route for testing
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to the VR Cinema API' });
 });
 
-// Routes
 app.use('/api/movies', movieRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/nft', nftRoutes);
@@ -34,15 +30,12 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/tmdb', tmdbRoutes);
 app.use('/api/playlist', playlistRoutes);
 app.use('/api/admin', adminRoutes);
-// Error handling
-app.use(errorHandler);
+ app.use(errorHandler);
 
-// Database connection
 mongoose.connect(MONGODB_URI)
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('MongoDB connection error:', err));
 
-// Start server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

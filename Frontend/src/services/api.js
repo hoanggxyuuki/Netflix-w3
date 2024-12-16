@@ -7,7 +7,6 @@ const api = axios.create({
   },
 });
 
-// Thêm token vào header nếu có
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) {
@@ -17,11 +16,9 @@ api.interceptors.request.use((config) => {
 });
 
 export const movieApi = {
-  // API không cần auth
   getAll: () => api.get('/movies'),
   getById: (id) => api.get(`/movies/${id}`),
 
-  // API cần auth
   getMovieStream: (id, mode) => 
     api.get(`/movies/${id}/stream`, { params: { mode } }),
   createMovie: (movieData) => 

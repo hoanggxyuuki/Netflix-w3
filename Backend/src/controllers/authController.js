@@ -9,18 +9,15 @@ exports.login = async (req, res, next) => {
   try {
     const { walletAddress, signature } = req.body;
     
-    // Verify signature here if needed
-    
-    // Find or create user
+
     let user = await User.findOne({ walletAddress: walletAddress.toLowerCase() });
     if (!user) {
       user = await User.create({ 
         walletAddress: walletAddress.toLowerCase(),
-        role: 'user' // Default role
+        role: 'user' 
       });
     }
 
-    // Generate JWT token
     const token = jwt.sign(
       { 
         id: user._id,
@@ -31,7 +28,6 @@ exports.login = async (req, res, next) => {
       { expiresIn: '24h' }
     );
 
-    // Return response with token
     res.json({
       success: true,
       data: {
@@ -53,13 +49,11 @@ exports.register = async (req, res, next) => {
   try {
     const { walletAddress, username, email } = req.body;
 
-    // Check if wallet address already exists
     const existingUser = await User.findOne({ walletAddress: walletAddress.toLowerCase() });
     if (existingUser) {
       throw new AppError('Wallet address already registered', 400);
     }
 
-    // Create new user
     const user = await User.create({
       walletAddress: walletAddress.toLowerCase(),
       username,
@@ -67,7 +61,6 @@ exports.register = async (req, res, next) => {
       nonce: Math.floor(Math.random() * 1000000)
     });
 
-    // Generate JWT token
     const token = generateToken(user._id);
 
     res.status(201).json({

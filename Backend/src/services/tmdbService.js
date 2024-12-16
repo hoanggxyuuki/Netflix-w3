@@ -31,7 +31,7 @@ class TMDBService {
         description: movie.overview,
         poster: movie.poster_path ? `${TMDB_IMAGE_BASE_URL}${movie.poster_path}` : null,
         releaseDate: movie.release_date,
-        rating: movie.vote_average / 2, // Convert to 5-star scale
+        rating: movie.vote_average / 2,  
         genre: movie.genre_ids
       }));
     } catch (error) {

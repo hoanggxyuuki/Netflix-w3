@@ -1,4 +1,3 @@
-// Frontend/src/components/Header/Header.jsx
 import { useState, useEffect } from 'react';
 import { useWeb3 } from '../../contexts/Web3Context';
 import './Header.css';
@@ -12,11 +11,10 @@ const Header = () => {
   };
 
   const handleDropdownClick = (e) => {
-    e.stopPropagation(); // Ngăn event bubble lên document
+    e.stopPropagation(); 
     setShowDropdown(!showDropdown);
   };
 
-  // Click outside to close dropdown
   useEffect(() => {
     const handleClickOutside = () => setShowDropdown(false);
     document.addEventListener('click', handleClickOutside);
@@ -46,7 +44,7 @@ const Header = () => {
             </button>
             {showDropdown && (
               <div className="dropdown-menu">
-                <button onClick={() => {/* TODO: Navigate to profile */}}>
+                <button onClick={() => {}}>
                   View Profile
                 </button>
                 <button onClick={() => {

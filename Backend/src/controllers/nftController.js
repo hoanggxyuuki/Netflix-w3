@@ -31,20 +31,15 @@ exports.buyNFT = async (req, res, next) => {
     const { movieId } = req.body;
     const { walletAddress } = req.user;
 
-    // Verify payment transaction
-    // This would typically involve checking the blockchain for the payment transaction
-    // and verifying that it was successful
-
-    // Create NFT record
+     
     const nft = await NFT.create({
       movieId,
       owner: req.user.id,
-      tokenId: Date.now(), // This should be the actual token ID from the blockchain
+      tokenId: Date.now(),  
       purchaseDate: new Date()
     });
 
-    // Update user's owned NFTs
-    await User.findByIdAndUpdate(
+     await User.findByIdAndUpdate(
       req.user.id,
       { $push: { ownedNFTs: nft._id } }
     );

@@ -470,3 +470,9 @@
 {"level":"info","message":{"ip":"::1","method":"POST","path":"/api/auth/login","timestamp":"2024-12-16T16:46:02.288Z"},"timestamp":"2024-12-16T16:46:02.288Z"}
 {"level":"info","message":{"ip":"::1","method":"GET","path":"/api/movies","timestamp":"2024-12-16T16:46:07.244Z"},"timestamp":"2024-12-16T16:46:07.244Z"}
 {"level":"info","message":{"ip":"::1","method":"GET","path":"/api/movies","timestamp":"2024-12-16T16:46:07.410Z"},"timestamp":"2024-12-16T16:46:07.410Z"}
+{"level":"info","message":{"ip":"::1","method":"GET","path":"/api/movies","timestamp":"2024-12-16T16:53:33.120Z"},"timestamp":"2024-12-16T16:53:33.120Z"}
+{"level":"info","message":{"ip":"::1","method":"GET","path":"/api/movies","timestamp":"2024-12-16T16:53:33.333Z"},"timestamp":"2024-12-16T16:53:33.333Z"}
+{"level":"info","message":{"ip":"::1","method":"GET","path":"/api/movies","timestamp":"2024-12-16T16:53:34.347Z"},"timestamp":"2024-12-16T16:53:34.347Z"}
+{"level":"info","message":{"ip":"::1","method":"GET","path":"/api/movies","timestamp":"2024-12-16T16:53:34.460Z"},"timestamp":"2024-12-16T16:53:34.460Z"}
+{"level":"info","message":{"ip":"::1","method":"GET","path":"/api/movies","timestamp":"2024-12-16T16:53:36.444Z"},"timestamp":"2024-12-16T16:53:36.444Z"}
+{"level":"info","message":{"ip":"::1","method":"GET","path":"/api/movies","timestamp":"2024-12-16T16:53:36.557Z"},"timestamp":"2024-12-16T16:53:36.557Z"}
