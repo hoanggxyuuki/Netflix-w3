@@ -9,7 +9,6 @@ export const Web3Provider = ({ children }) => {
   const [account, setAccount] = useState(null);
   const [provider, setProvider] = useState(null);
   const [loading, setLoading] = useState(false);
-
   useEffect(() => {
     const checkConnection = async () => {
       const token = localStorage.getItem('token');
@@ -50,7 +49,7 @@ export const Web3Provider = ({ children }) => {
       
       if (response.data.success) {
         localStorage.setItem('token', response.data.data.token);
-        
+        localStorage.setItem('userrole', response.data.data.user.role);
         setAccount(address);
         toast.success('Wallet connected successfully!');
       }
@@ -92,7 +91,7 @@ export const Web3Provider = ({ children }) => {
     setAccount(null);
     setProvider(null);
     localStorage.removeItem('token');
-    
+    localStorage.removeItem('userrole');
   };
 
   useEffect(() => {
@@ -123,6 +122,7 @@ export const Web3Provider = ({ children }) => {
       value={{ 
         account, 
         provider, 
+        
         connect, 
         disconnect: handleDisconnect,
         loading 

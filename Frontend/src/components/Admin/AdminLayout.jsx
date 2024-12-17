@@ -4,9 +4,10 @@ import './Admin.css';
 import { Link } from 'react-router-dom';
 
 const AdminLayout = () => {
-  const { account } = useWeb3();
+  // const { userRole } = useWeb3();
+  const userRole = localStorage.getItem('userrole');
 
-  if (!account) {
+  if ( userRole != 'admin') {
     return <Navigate to="/" replace />;
   }
 

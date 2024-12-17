@@ -117,3 +117,35 @@
       transform: translateY(0);
     }
   }
+  
+  .dropdown-link {
+    display: block;
+    width: 100%;
+    padding: 8px 16px;
+    text-align: left;
+    background: none;
+    border: none;
+    color: var(--text-color);
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  .dropdown-link:hover {
+    background-color: var(--hover-color);
+  }
+  
+  .dropdown-menu button,
+  .dropdown-menu .dropdown-link {
+    width: 100%;
+    padding: 8px 16px;
+    text-align: left;
+    background: none;
+    border: none;
+    color: var(--text-color);
+    cursor: pointer;
+  }
+  
+  .dropdown-menu button:hover,
+  .dropdown-menu .dropdown-link:hover {
+    background-color: var(--hover-color);
+  }
