@@ -4,6 +4,9 @@ import { toast } from 'react-toastify';
 import { useWeb3 } from '../../contexts/Web3Context';
 import { movieApi } from '../../services/api';
 import VideoPlayer from '../VideoPlayer/VideoPlayer';
+import MovieHeader from '../MovieInfo/MovieHeader';
+import MoviePoster from '../MovieInfo/MoviePoster';
+import WatchButtons from '../MovieInfo/WatchButtons';
 import './ViewModeSelection.css';
 
 const ViewModeSelection = () => {
@@ -95,54 +98,39 @@ const ViewModeSelection = () => {
       
       <div className="view-mode-content">
         <div className="movie-info">
-          <div className="movie-header">
-            <h2>{movie.title}</h2>
-            {movie.releaseDate && (
-              <span className="release-date">{movie.releaseDate}</span>
-            )}
-          </div>
+          <MovieHeader 
+            title={movie.title} 
+            releaseDate={movie.releaseDate} 
+          />
           
           <div className="poster-section">
-            <div className="poster-wrapper">
-              <img src={movie.poster} alt={movie.title} className="movie-poster" />
-              <div className="poster-overlay">
-                <div className="rating">{movie.rating || 'N/A'}</div>
-              </div>
-            </div>
+            <MoviePoster 
+              poster={movie.poster}
+              title={movie.title}
+              rating={movie.rating}
+            />
             <div className="movie-details">
               <p className="movie-description">{movie.description}</p>
-              <div className="mode-buttons">
-                <button 
-                  className={`watch-button trailer ${activeVideo === 'trailer' ? 'active' : ''}`}
-                  onClick={handleWatchTrailer}
-                >
-                  <i className="fas fa-play"></i>
-                  Xem Trailer
-                </button>
-                <button 
-                  className={`watch-button ${activeVideo === 'movie' ? 'active' : ''}`}
-                  onClick={handleWatchMovie}
-                >
-                  <i className="fas fa-film"></i>
-                  Xem Phim
-                </button>
-              </div>
+              <WatchButtons 
+                activeVideo={activeVideo}
+                onWatchTrailer={handleWatchTrailer}
+                onWatchMovie={handleWatchMovie}
+              />
               {videoUrl && (
                 <div className="video-player-section">
                   <VideoPlayer url={videoUrl} onClose={closeVideo} />
                 </div>
               )}
+              <button 
+                className="back-button"
+                onClick={() => navigate('/')}
+              >
+                <i className="fas fa-arrow-left"></i>
+                Quay lại
+              </button>
             </div>
           </div>
         </div>
-
-        <button 
-          className="back-button"
-          onClick={() => navigate('/')}
-        >
-          <i className="fas fa-arrow-left"></i>
-          Quay lại
-        </button>
       </div>
     </div>
   );

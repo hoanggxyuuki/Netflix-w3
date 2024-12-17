@@ -11,7 +11,11 @@ const MovieManagement = () => {
     price: '',
     video: null,
     vrVideo: null,
-    poster: null
+    poster: null,
+    hasVR: false,
+    genre: '',
+    duration: '',
+    rating: ''
   });
 
   useEffect(() => {
@@ -20,7 +24,7 @@ const MovieManagement = () => {
 
   const fetchMovies = async () => {
     try {
-      const response = await fetch('/api/movies');
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/movies`);
       const data = await response.json();
       if (data.success) {
         setMovies(data.data.local || []);
@@ -34,32 +38,47 @@ const MovieManagement = () => {
 
   const handleUpload = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    Object.keys(uploadForm).forEach(key => {
-      if (uploadForm[key]) {
-        formData.append(key, uploadForm[key]);
-      }
-    });
+    setLoading(true);
 
     try {
-      const response = await fetch('/api/admin/movies', {
+      const formData = new FormData();
+      Object.keys(uploadForm).forEach(key => {
+        formData.append(key, uploadForm[key]);
+      });
+
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/movies`, {
         method: 'POST',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        },
         body: formData
       });
-      if (response.ok) {
-        toast.success('Movie uploaded successfully');
-        fetchMovies();
-        setUploadForm({
-          title: '',
-          description: '',
-          price: '',
-          video: null,
-          vrVideo: null,
-          poster: null
-        });
+
+      if (!response.ok) {
+        throw new Error('Upload failed');
       }
+
+      toast.success('Movie uploaded successfully');
+      fetchMovies(); // Refresh movie list
+      
+      // Reset form
+      setUploadForm({
+        title: '',
+        description: '',
+        price: '',
+        video: null, 
+        vrVideo: null,
+        poster: null,
+        hasVR: false,
+        genre: '',
+        duration: '',
+        rating: ''
+      });
+
     } catch (error) {
       toast.error('Failed to upload movie');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -91,34 +110,99 @@ const MovieManagement = () => {
           placeholder="Title"
           value={uploadForm.title}
           onChange={(e) => setUploadForm({...uploadForm, title: e.target.value})}
+          required
         />
+
         <textarea
-          placeholder="Description"
+          placeholder="Description" 
           value={uploadForm.description}
           onChange={(e) => setUploadForm({...uploadForm, description: e.target.value})}
+          required
         />
+
         <input
           type="number"
+          step="0.01"
           placeholder="Price (ETH)"
           value={uploadForm.price}
           onChange={(e) => setUploadForm({...uploadForm, price: e.target.value})}
+          required
         />
-        <input
-          type="file"
-          accept="video/*"
-          onChange={(e) => setUploadForm({...uploadForm, video: e.target.files[0]})}
-        />
-        <input
-          type="file"
-          accept="video/*"
-          onChange={(e) => setUploadForm({...uploadForm, vrVideo: e.target.files[0]})}
-        />
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => setUploadForm({...uploadForm, poster: e.target.files[0]})}
-        />
-        <button type="submit">Upload Movie</button>
+
+        <div className="file-inputs">
+          <div>
+            <label>Movie File:</label>
+            <input
+              type="file"
+              accept="video/*"
+              onChange={(e) => setUploadForm({...uploadForm, video: e.target.files[0]})}
+              required
+            />
+          </div>
+
+          <div>
+            <label>VR Video (Optional):</label>
+            <input
+              type="file"
+              accept="video/*"
+              onChange={(e) => setUploadForm({...uploadForm, vrVideo: e.target.files[0]})}
+            />
+          </div>
+
+          <div>
+            <label>Poster Image:</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setUploadForm({...uploadForm, poster: e.target.files[0]})}
+              required
+            />
+          </div>
+        </div>
+
+        <div className="form-row">
+          <input
+            type="text"
+            placeholder="Genre"
+            value={uploadForm.genre}
+            onChange={(e) => setUploadForm({...uploadForm, genre: e.target.value})}
+            required
+          />
+
+          <input
+            type="text"
+            placeholder="Duration (e.g. 120 min)"
+            value={uploadForm.duration}
+            onChange={(e) => setUploadForm({...uploadForm, duration: e.target.value})}
+            required
+          />
+
+          <input
+            type="number"
+            step="0.1"
+            min="0"
+            max="10"
+            placeholder="Rating"
+            value={uploadForm.rating}
+            onChange={(e) => setUploadForm({...uploadForm, rating: e.target.value})}
+            required
+          />
+        </div>
+
+        <div className="form-row">
+          <label>
+            <input
+              type="checkbox"
+              checked={uploadForm.hasVR}
+              onChange={(e) => setUploadForm({...uploadForm, hasVR: e.target.checked})}
+            />
+            Has VR Version
+          </label>
+        </div>
+
+        <button type="submit" disabled={loading}>
+          {loading ? 'Uploading...' : 'Upload Movie'}
+        </button>
       </form>
 
       <div className="movies-list">

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import './Admin.css';
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -11,67 +12,121 @@ const UserManagement = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('/api/admin/users');
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/users`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
       const data = await response.json();
       if (data.success) {
         setUsers(data.data);
       }
     } catch (error) {
-      toast.error('Failed to fetch users');
+      console.error('Failed to fetch users:', error);
+      toast.error('Failed to load users');
     } finally {
       setLoading(false);
     }
   };
 
-  const updateUserRole = async (userId, newRole) => {
+  const handleRoleUpdate = async (userId, newRole) => {
     try {
-      const response = await fetch(`/api/admin/users/${userId}/role`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ role: newRole })
-      });
-      if (response.ok) {
-        fetchUsers();
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/admin/users/${userId}/role`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ role: newRole })
+        }
+      );
+      const data = await response.json();
+      if (data.success) {
+        setUsers(users.map(user => 
+          user._id === userId ? { ...user, role: newRole } : user
+        ));
         toast.success('User role updated successfully');
       }
     } catch (error) {
+      console.error('Failed to update user role:', error);
       toast.error('Failed to update user role');
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  const handleDeleteUser = async (userId) => {
+    if (!window.confirm('Are you sure you want to delete this user?')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/admin/users/${userId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      const data = await response.json();
+      if (data.success) {
+        setUsers(users.filter(user => user._id !== userId));
+        toast.success('User deleted successfully');
+      }
+    } catch (error) {
+      console.error('Failed to delete user:', error);
+      toast.error('Failed to delete user');
+    }
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="user-management">
       <h2>User Management</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Wallet Address</th>
-            <th>Username</th>
-            <th>Role</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map(user => (
-            <tr key={user._id}>
-              <td>{user.walletAddress}</td>
-              <td>{user.username}</td>
-              <td>{user.role}</td>
-              <td>
-                <select 
-                  value={user.role}
-                  onChange={(e) => updateUserRole(user._id, e.target.value)}
-                >
-                  <option value="user">User</option>
-                  <option value="admin">Admin</option>
-                </select>
-              </td>
+      <div className="users-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Wallet Address</th>
+              <th>Role</th>
+              <th>Joined Date</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {users.map(user => (
+              <tr key={user._id}>
+                <td>{user.walletAddress}</td>
+                <td>
+                  <select
+                    value={user.role}
+                    onChange={(e) => handleRoleUpdate(user._id, e.target.value)}
+                  >
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </td>
+                <td>{new Date(user.createdAt).toLocaleDateString()}</td>
+                <td>
+                  <button
+                    className="delete-btn"
+                    onClick={() => handleDeleteUser(user._id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

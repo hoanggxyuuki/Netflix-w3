@@ -1,18 +1,38 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
 const { authMiddleware } = require('../middlewares/authMiddleware');
 const { adminMiddleware } = require('../middlewares/adminMiddleware');
+const movieController = require('../controllers/movieController');
+const adminController = require('../controllers/adminController');
 
- router.use(authMiddleware, adminMiddleware);
+// Configure multer for memory storage
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 100 * 1024 * 1024, // 100MB limit
+  }
+});
 
- router.get('/dashboard', (req, res) => {
+// Configure multiple file uploads
+const uploadFields = upload.fields([
+  { name: 'video', maxCount: 1 },
+  { name: 'vrVideo', maxCount: 1 },
+  { name: 'poster', maxCount: 1 }
+]);
+
+router.use(authMiddleware, adminMiddleware);
+
+router.post('/movies', uploadFields, movieController.createMovie);
+
+router.get('/dashboard-stats', adminController.getDashboardStats);
+
+router.get('/dashboard', (req, res) => {
   res.json({ message: 'Admin dashboard' });
 });
 
-router.get('/users', (req, res) => {
- });
-
-router.post('/movies', (req, res) => {
- });
+router.get('/users', adminController.getUsers);
+router.patch('/users/:userId/role', adminController.updateUserRole);
+router.delete('/users/:userId', adminController.deleteUser);
 
 module.exports = router;

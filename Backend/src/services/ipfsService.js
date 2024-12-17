@@ -5,6 +5,11 @@ const { PINATA_JWT } = require('../config/env');
 
 class IPFSService {
   constructor() {
+    if (!PINATA_JWT) {
+      console.error('PINATA_JWT is not configured');
+      throw new Error('PINATA_JWT is required');
+    }
+
     this.api = axios.create({
       baseURL: 'https://api.pinata.cloud',
       headers: {
@@ -20,6 +25,8 @@ class IPFSService {
         filename: filename || 'file'
       });
 
+      console.log('Uploading to Pinata with JWT:', PINATA_JWT.substring(0, 10) + '...');
+
       const response = await this.api.post('/pinning/pinFileToIPFS', formData, {
         maxBodyLength: 'Infinity',
         headers: {
@@ -29,7 +36,11 @@ class IPFSService {
 
       return `ipfs://${response.data.IpfsHash}`;
     } catch (error) {
-      console.error('IPFS upload error:', error);
+      console.error('IPFS upload error details:', {
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data
+      });
       throw new AppError('Error uploading file to IPFS', 500);
     }
   }

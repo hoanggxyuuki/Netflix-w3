@@ -1,5 +1,6 @@
 const Movie = require('../models/Movie');
 const movieService = require('../services/movieService');
+const ipfsService = require('../services/ipfsService');
 const { AppError } = require('../middlewares/errorHandler');
 const { validateMovieInput } = require('../utils/validateInput');
 
@@ -66,27 +67,42 @@ exports.getMovieById = async (req, res, next) => {
 
 exports.createMovie = async (req, res, next) => {
   try {
-    const movieData = {
-      title: req.body.title,
-      description: req.body.description,
-      poster: req.body.poster,
-      streamUrl: req.body.streamUrl,
-      vrStreamUrl: req.body.vrStreamUrl || null,
-      hasVR: Boolean(req.body.hasVR),
-      duration: req.body.duration,
-      releaseDate: req.body.releaseDate,
-      rating: req.body.rating,
-      genre: req.body.genre,
-      price: req.body.price,
-      nftContractAddress: req.body.nftContractAddress,
-      uploadedBy: req.user.id  
-    };
+    const { title, description, price, hasVR, genre, duration, rating } = req.body;
+    const { video, vrVideo, poster } = req.files;
 
-     if (!movieData.title || !movieData.description || !movieData.streamUrl) {
-      throw new AppError('Missing required fields', 400);
+    if (!video || !poster) {
+      throw new AppError('Video and poster are required', 400);
     }
 
-     const movie = await Movie.create(movieData);
+    // Upload files to IPFS via Pinata
+    const [videoUrl, posterUrl] = await Promise.all([
+      ipfsService.uploadFile(video[0].buffer, `${title}-video`),
+      ipfsService.uploadFile(poster[0].buffer, `${title}-poster`)
+    ]);
+
+    let vrStreamUrl = null;
+    if (hasVR === 'true' && vrVideo) {
+      vrStreamUrl = await ipfsService.uploadFile(
+        vrVideo[0].buffer,
+        `${title}-vr-video`
+      );
+    }
+
+    // Create movie record
+    const movie = await Movie.create({
+      title,
+      description,
+      price: parseFloat(price),
+      hasVR: hasVR === 'true',
+      streamUrl: videoUrl,
+      poster: posterUrl,
+      vrStreamUrl,
+      genre: genre.split(',').map(g => g.trim()),
+      duration: parseInt(duration),
+      rating: parseFloat(rating),
+      uploadedBy: req.user.id,
+      nftContractAddress: process.env.NFT_CONTRACT_ADDRESS
+    });
 
     res.status(201).json({
       success: true,

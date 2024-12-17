@@ -15,7 +15,12 @@ const AdminDashboard = () => {
 
   const fetchDashboardStats = async () => {
     try {
-      const response = await fetch('/api/admin/dashboard-stats');
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/admin/dashboard-stats`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
+        }
+      });
       const data = await response.json();
       if (data.success) {
         setStats(data.data);
