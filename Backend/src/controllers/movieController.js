@@ -74,7 +74,6 @@ exports.createMovie = async (req, res, next) => {
       throw new AppError('Video and poster are required', 400);
     }
 
-    // Upload files to IPFS via Pinata
     const [videoUrl, posterUrl] = await Promise.all([
       ipfsService.uploadFile(video[0].buffer, `${title}-video`),
       ipfsService.uploadFile(poster[0].buffer, `${title}-poster`)
@@ -88,7 +87,6 @@ exports.createMovie = async (req, res, next) => {
       );
     }
 
-    // Create movie record
     const movie = await Movie.create({
       title,
       description,

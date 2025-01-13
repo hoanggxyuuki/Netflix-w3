@@ -10,7 +10,6 @@ exports.checkOwnership = async (req, res, next) => {
     const { movieId } = req.params;
     const { walletAddress } = req.user;
 
-    // Check NFT ownership on blockchain
     const provider = new ethers.providers.JsonRpcProvider(WEB3_PROVIDER_URL);
     const nftContract = new ethers.Contract(NFT_CONTRACT_ADDRESS, NFT_ABI, provider);
     

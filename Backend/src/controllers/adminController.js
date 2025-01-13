@@ -9,7 +9,6 @@ exports.getDashboardStats = async (req, res, next) => {
       Movie.countDocuments()
     ]);
 
-    // Tính tổng revenue từ các giao dịch (giả sử có field price trong Movie)
     const movies = await Movie.find({}, 'price');
     const totalRevenue = movies.reduce((sum, movie) => sum + (movie.price || 0), 0);
 
@@ -26,7 +25,6 @@ exports.getDashboardStats = async (req, res, next) => {
   }
 };
 
-// Lấy danh sách users
 exports.getUsers = async (req, res, next) => {
   try {
     const users = await User.find({})
@@ -42,7 +40,6 @@ exports.getUsers = async (req, res, next) => {
   }
 };
 
-// Cập nhật role của user
 exports.updateUserRole = async (req, res, next) => {
   try {
     const { userId } = req.params;
@@ -71,7 +68,6 @@ exports.updateUserRole = async (req, res, next) => {
   }
 };
 
-// Xóa user
 exports.deleteUser = async (req, res, next) => {
   try {
     const { userId } = req.params;

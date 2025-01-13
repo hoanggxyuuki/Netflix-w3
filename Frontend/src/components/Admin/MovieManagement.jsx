@@ -59,9 +59,8 @@ const MovieManagement = () => {
       }
 
       toast.success('Movie uploaded successfully');
-      fetchMovies(); // Refresh movie list
+      fetchMovies(); 
       
-      // Reset form
       setUploadForm({
         title: '',
         description: '',

@@ -6,15 +6,13 @@ const { adminMiddleware } = require('../middlewares/adminMiddleware');
 const movieController = require('../controllers/movieController');
 const adminController = require('../controllers/adminController');
 
-// Configure multer for memory storage
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
-    fileSize: 100 * 1024 * 1024, // 100MB limit
+    fileSize: 100 * 1024 * 1024, 
   }
 });
 
-// Configure multiple file uploads
 const uploadFields = upload.fields([
   { name: 'video', maxCount: 1 },
   { name: 'vrVideo', maxCount: 1 },
